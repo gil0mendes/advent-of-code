@@ -6,15 +6,7 @@ fn get_values(memory: &Vec<u32>, pc: usize) -> (u32, u32) {
     (memory[op1 as usize], memory[op2 as usize])
 }
 
-fn main() {
-    let file_content = fs::read_to_string("input.txt").expect("File doesn't exists");
-    
-    let mut memory: Vec<u32> = file_content
-        .trim()
-        .split(",")
-        .map(|s| s.parse().unwrap())
-        .collect();
-
+fn execute_program(mut memory: Vec<u32>) -> Vec<u32> {
     let mut pc: usize = 0;
 
     loop {
@@ -40,5 +32,39 @@ fn main() {
         pc += 4;
     }
 
-    println!("Answer: {}", memory[0]);
+    memory
+}
+
+fn search_combination(init_memory: Vec<u32>, target: u32) -> u32 {
+    for noun in 0..99 {
+        for verb in 0..99 {
+            let mut memory = init_memory.clone();
+            memory[1] = noun;
+            memory[2] = verb;
+
+            let result = execute_program(memory);
+            if result[0] == target {
+                return 100 * noun + verb;
+            }
+        }
+    }
+
+    0
+}
+
+fn main() {
+    let file_content = fs::read_to_string("input.txt").expect("File doesn't exists");
+    
+    let initial_memory: Vec<u32> = file_content
+        .trim()
+        .split(",")
+        .map(|s| s.parse().unwrap())
+        .collect();
+
+    // --- Part 2
+    println!("Part 1 answer: {}", execute_program(initial_memory.clone())[0]);
+
+    // --- Part 2
+    println!("Part 2 answer: {}", search_combination(initial_memory, 19690720));
+    
 }
