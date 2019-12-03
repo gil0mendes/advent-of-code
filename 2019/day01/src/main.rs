@@ -31,7 +31,7 @@ fn main() {
     let part1: u32 = modules.iter().map(call_fuel_for_mass).sum();
     let part2: u32 = modules.iter().map(calc_integral_fuel).sum();
 
-    
+
 
     println!("Part1: {}", part1);
     println!("Part2: {}", part2);
