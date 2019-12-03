@@ -61,10 +61,7 @@ fn main() {
         .map(|s| s.parse().unwrap())
         .collect();
 
-    // --- Part 2
     println!("Part 1 answer: {}", execute_program(initial_memory.clone())[0]);
-
-    // --- Part 2
     println!("Part 2 answer: {}", search_combination(initial_memory, 19690720));
     
 }
