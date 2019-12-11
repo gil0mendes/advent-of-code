@@ -59,6 +59,11 @@ impl Machine {
         }
     }
 
+    /// Get address based on PC offset
+    fn get_address(&self, nth: usize) -> usize {
+        self.memory[self.pc + nth] as usize
+    }
+
     pub fn execute_program(&mut self) {
         loop {
             let pc = self.pc;
@@ -83,8 +88,8 @@ impl Machine {
                 },
                 // Store
                 3 => {
-                    let address = self.memory[self.pc + 1];
-                    self.memory[address as usize] = self.input.remove(0);
+                    let address = self.get_address(1);
+                    self.memory[address] = self.input.remove(0);
     
                     2
                 },
@@ -94,6 +99,43 @@ impl Machine {
                     self.output.push(value);
     
                     2
+                },
+                // Jump if true
+                5 => {
+                    let value = self.get_param(1);
+                    if value != 0 {
+                        let address = self.get_param(2);
+                        self.pc = address as usize;
+                        0
+                    } else {
+                        3
+                    }
+                },
+                // Jump if false
+                6 => {
+                    let value = self.get_param(1);
+                    if value == 0 {
+                        let address = self.get_param(2);
+                        self.pc = address as usize;
+                        0
+                    } else {
+                        3
+                    }
+                },
+                // less than
+                7 => {
+                    let (v1, v2) = (self.get_param(1), self.get_param(2));
+                    let address = self.get_address(3);
+                    self.memory[address] = (v1 < v2) as i32;
+
+                    4
+                },
+                8 => {
+                    let (v1, v2) = (self.get_param(1), self.get_param(2));
+                    let address = self.get_address(3);
+                    self.memory[address] = (v1 == v2) as i32;
+
+                    4
                 },
                 99 => { break; },
                 _ => {
@@ -119,8 +161,11 @@ fn main() {
 
     let mut machine = Machine::new(initial_memory.clone(), vec![1]);
     machine.execute_program();
-
     println!("Part 1: {:?}", machine.output);
+
+    let mut machine = Machine::new(initial_memory.clone(), vec![5]);
+    machine.execute_program();
+    println!("Part 2: {:?}", machine.output);
 }
 
 #[cfg(test)]
@@ -173,5 +218,101 @@ mod test {
         machine.execute_program();
 
         assert_eq!(8, machine.memory[0]);
+    }
+
+    #[test]
+    fn test_position_mode_equal() {
+        let mut machine = Machine::new(vec![3,9,8,9,10,9,4,9,99,-1,8], vec![8]);
+        machine.execute_program();
+
+        assert_eq!(1, machine.output[0]);
+    }
+
+    #[test]
+    fn test_position_mode_not_equal() {
+        let mut machine = Machine::new(vec![3,9,8,9,10,9,4,9,99,-1,8], vec![10]);
+        machine.execute_program();
+
+        assert_eq!(0, machine.output[0]);
+    }
+    
+    #[test]
+    fn test_position_mode_less_than() {
+        let mut machine = Machine::new(vec![3,9,7,9,10,9,4,9,99,-1,8], vec![3]);
+        machine.execute_program();
+
+        assert_eq!(1, machine.output[0]);
+    }
+
+    #[test]
+    fn test_position_mode_greater_than() {
+        let mut machine = Machine::new(vec![3,9,7,9,10,9,4,9,99,-1,8], vec![10]);
+        machine.execute_program();
+
+        assert_eq!(0, machine.output[0]);
+    }
+
+    #[test]
+    fn test_immediate_mode_equal() {
+        let mut machine = Machine::new(vec![3,3,1108,-1,8,3,4,3,99], vec![8]);
+        machine.execute_program();
+
+        assert_eq!(1, machine.output[0]);
+    }
+
+    #[test]
+    fn test_immediate_mode_not_equal() {
+        let mut machine = Machine::new(vec![3,3,1108,-1,8,3,4,3,99], vec![10]);
+        machine.execute_program();
+
+        assert_eq!(0, machine.output[0]);
+    }
+    
+    #[test]
+    fn test_immediate_mode_less_than() {
+        let mut machine = Machine::new(vec![3,3,1107,-1,8,3,4,3,99], vec![3]);
+        machine.execute_program();
+
+        assert_eq!(1, machine.output[0]);
+    }
+
+    #[test]
+    fn test_immediate_mode_greater_than() {
+        let mut machine = Machine::new(vec![3,3,1107,-1,8,3,4,3,99], vec![10]);
+        machine.execute_program();
+
+        assert_eq!(0, machine.output[0]);
+    }
+
+    #[test]
+    fn test_position_jump_zero() {
+        let mut machine = Machine::new(vec![3,12,6,12,15,1,13,14,13,4,13,99,-1,0,1,9], vec![0]);
+        machine.execute_program();
+
+        assert_eq!(0, machine.output[0]);
+    }
+
+    #[test]
+    fn test_position_jump_one() {
+        let mut machine = Machine::new(vec![3,12,6,12,15,1,13,14,13,4,13,99,-1,0,1,9], vec![100]);
+        machine.execute_program();
+
+        assert_eq!(1, machine.output[0]);
+    }
+
+    #[test]
+    fn test_immediate_jump_zero() {
+        let mut machine = Machine::new(vec![3,3,1105,-1,9,1101,0,0,12,4,12,99,1], vec![0]);
+        machine.execute_program();
+
+        assert_eq!(0, machine.output[0]);
+    }
+
+    #[test]
+    fn test_immediate_jump_one() {
+        let mut machine = Machine::new(vec![3,3,1105,-1,9,1101,0,0,12,4,12,99,1], vec![100]);
+        machine.execute_program();
+
+        assert_eq!(1, machine.output[0]);
     }
 }
