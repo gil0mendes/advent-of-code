@@ -1,29 +1,39 @@
-use std::fs;
+use std::iter::FromIterator;
+use std::{collections::HashSet, fs};
 
 const TARGET: u32 = 2020;
+
+/// makes use of a HashSet to get an entry that possibly matches the criteria. When found it multiplies to get the
+/// result.
+fn find_two(expenses: &Vec<u32>) -> Option<u32> {
+    let entries = HashSet::<u32>::from_iter(expenses.iter().copied());
+
+    entries
+        .iter()
+        .find_map(|x| entries.get(&(TARGET - x)).map(|x| x * x))
+}
+
+/// uses the same approach as the first, but with an additional variable.
+fn find_three(expenses: &Vec<u32>) -> Option<u32> {
+    let entries = HashSet::<u32>::from_iter(expenses.iter().copied());
+
+    entries.iter().find_map(|x| {
+        entries
+            .iter()
+            .filter(|&y| y != x)
+            .find_map(|y| entries.get(&(TARGET - x - y)).map(|z| x * y * z))
+    })
+}
 
 fn main() {
     let file_content = fs::read_to_string("input.txt").expect("File doesn't exists");
 
-    let mut result_1: u32 = 0;
-    let mut result_2: u32 = 0;
+    let all_expenses: Vec<u32> = file_content
+        .trim()
+        .lines()
+        .map(|s| s.parse().unwrap())
+        .collect();
 
-    let all_expenses: Vec<u32> = file_content.trim().lines().map(|s| s.parse().unwrap()).collect();
-
-    for x in 0..all_expenses.len() {
-        for y in 1..all_expenses.len() {
-            if all_expenses[x] + all_expenses[y] == TARGET {
-                result_1 = all_expenses[x] * all_expenses[y];
-            }
-
-            for z in 0..all_expenses.len() {
-                if (all_expenses[x] + all_expenses[y] + all_expenses[z]) == TARGET {
-                    result_2 = all_expenses[x] * all_expenses[y] * all_expenses[z];
-                }
-            }
-        }
-    }
-
-    println!("Part 1: {}", result_1);
-    println!("Part 2: {}", result_2);
+    println!("Part 1: {}", find_two(&all_expenses).unwrap());
+    println!("Part 2: {}", find_three(&all_expenses).unwrap());
 }
