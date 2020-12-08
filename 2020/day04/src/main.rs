@@ -70,8 +70,6 @@ fn main() {
         .map(|e| e.replace("\n", " ").parse::<Document>().unwrap())
         .collect();
 
-    // Part 1
     let len_valid_docs = documents.iter().filter(|&doc| doc.is_valid()).count();
     println!("Part 1: {:?}", len_valid_docs);
-    // println!("Part 2: {}", number_of_trees_on_slope(&map));
 }

@@ -30,24 +30,6 @@ struct Document {
 }
 
 impl Document {
-    fn is_valid(&self) -> bool {
-        if [&self.byr, &self.iyr, &self.eyr]
-            .iter()
-            .all(|part| part.is_some())
-            == false
-        {
-            return false;
-        }
-
-        if self.hgt.is_none() {
-            return false;
-        }
-
-        [&self.hcl, &self.ecl, &self.pid]
-            .iter()
-            .all(|part| part.is_some())
-    }
-
     fn has_valid_values(&self) -> bool {
         // Birth Year
         match self.byr {
@@ -159,11 +141,6 @@ fn main() {
         .map(|e| e.replace("\n", " ").parse::<Document>().unwrap())
         .collect();
 
-    // Part 1
-    let len_valid_docs = documents.iter().filter(|&doc| doc.is_valid()).count();
-    println!("Part 1: {:?}", len_valid_docs);
-
-    // Part 2
     let len_valid_docs_pt2 = documents
         .iter()
         .filter(|&doc| doc.has_valid_values())
