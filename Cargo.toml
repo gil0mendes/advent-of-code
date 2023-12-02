@@ -1,0 +1,15 @@
+[workspace]
+resolver = "2"
+members = [
+	"20*/day*"
+]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+authors = ["Gil Mendes<gil0mendes@gmail.com>"]
+repository = "https://github.com/gil0mendes/advent-of-code"
+license = "MIT"
+
+[workspace.dependencies]
+itertools = "0.12.0"
