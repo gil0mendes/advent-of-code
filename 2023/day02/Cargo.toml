@@ -1,0 +1,11 @@
+[package]
+name = "aoc2023day02"
+edition.workspace = true
+version.workspace = true
+authors.workspace = true
+repository.workspace = true
+license.workspace = true
+
+[dependencies]
+itertools.workspace = true
+regex.workspace = true
