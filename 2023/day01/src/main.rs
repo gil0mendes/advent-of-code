@@ -1,13 +1,13 @@
+use itertools::Itertools;
+
 use std::fs;
 
 fn compute_part1(raw_data: String) -> u32 {
     let all_numbers_per_row: Vec<Vec<String>> = raw_data
-        .trim()
         .lines()
         .map(|line| {
             line.chars()
-                .filter(|ch| ch.is_numeric())
-                .map(|ch| ch.to_string())
+                .filter_map(|ch| ch.is_numeric().then(|| ch.to_string()))
                 .collect()
         })
         .collect();
@@ -22,14 +22,39 @@ fn compute_part1(raw_data: String) -> u32 {
 }
 
 fn compute_part2(raw_data: String) -> u32 {
-    0
+    let valid_digits = [
+        "1", "2", "3", "4", "5", "6", "7", "8", "9", "one", "two", "three", "four", "five", "six",
+        "seven", "eight", "nine",
+    ];
+
+    raw_data
+        .lines()
+        .map(|line| {
+            let (_, first) = valid_digits
+                .iter()
+                .enumerate()
+                .filter_map(|(idx, digit)| line.find(digit).map(|pos| (pos, idx)))
+                .min()
+                .expect("no first digit found");
+
+            let (_, last) = valid_digits
+                .iter()
+                .enumerate()
+                .filter_map(|(idx, digit)| line.rfind(digit).map(|pos| (pos, idx)))
+                .max()
+                .expect("no last digit found");
+
+            Ok::<(u32, u32), ()>((first as u32 % 9 + 1, last as u32 % 9 + 1))
+        })
+        .process_results(|it| it.map(|(d1, d2)| d1 * 10 + d2).sum::<u32>())
+        .unwrap()
 }
 
 fn main() {
-    let raw_data = fs::read_to_string("input.txt").expect("input file does not exists");
+    let raw_data = fs::read_to_string("2023/day01/input.txt").expect("input file does not exists");
 
     println!("Result part 1: {}", compute_part1(raw_data.clone()));
-    println!("Result part 1: {}", compute_part2(raw_data));
+    println!("Result part 2: {}", compute_part2(raw_data));
 }
 
 #[test]
