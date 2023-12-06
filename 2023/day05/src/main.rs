@@ -2,6 +2,7 @@
 
 use std::{fs, str::Lines, vec};
 
+use itertools::Itertools;
 use regex::Regex;
 
 #[derive(Debug)]
@@ -52,8 +53,8 @@ impl Almanac {
         source
     }
 
-    pub fn lowest_seed_number(&self) -> u64 {
-        self.seeds
+    pub fn lowest_seed_number(&self, seeds: &Vec<u64>) -> u64 {
+        seeds
             .iter()
             .map(|&seed| {
                 let soil = self.source_to_destination(&self.seed_to_soil, seed);
@@ -126,11 +127,20 @@ fn parse(raw_data: &String) -> Almanac {
 fn compute_part1(raw_data: &String) -> u64 {
     let data = parse(raw_data);
 
-    data.lowest_seed_number()
+    data.lowest_seed_number(&data.seeds)
 }
 
 fn compute_part2(raw_data: &String) -> u64 {
-    0
+    let data = parse(raw_data);
+
+    let seeds = data
+        .seeds
+        .iter()
+        .tuples()
+        .flat_map(|(&start, &length)| (start..(start + length)))
+        .collect_vec();
+
+    data.lowest_seed_number(&seeds)
 }
 
 fn main() {
@@ -216,6 +226,6 @@ humidity-to-location map:
 60 56 37
 56 93 4";
 
-    assert_eq!(30, compute_part2(&INPUT.to_string()));
+    assert_eq!(46, compute_part2(&INPUT.to_string()));
     Ok(())
 }
