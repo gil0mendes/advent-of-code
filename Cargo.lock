@@ -148,6 +148,16 @@ dependencies = [
 name = "aoc2023day05"
 version = "0.1.0"
 dependencies = [
+ "common",
+ "itertools",
+ "regex",
+]
+
+[[package]]
+name = "aoc2023day06"
+version = "0.1.0"
+dependencies = [
+ "common",
  "itertools",
  "regex",
 ]
@@ -191,6 +201,13 @@ dependencies = [
  "num-traits",
  "wasm-bindgen",
  "windows-targets",
+]
+
+[[package]]
+name = "common"
+version = "0.1.0"
+dependencies = [
+ "regex",
 ]
 
 [[package]]

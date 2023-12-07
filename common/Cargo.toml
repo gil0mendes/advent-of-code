@@ -1,12 +1,12 @@
 [package]
-name = "aoc2023day05"
-edition.workspace = true
+name = "common"
 version.workspace = true
+edition.workspace = true
 authors.workspace = true
 repository.workspace = true
 license.workspace = true
 
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
 [dependencies]
-common = { path = "../../common" }
-itertools.workspace = true
 regex.workspace = true

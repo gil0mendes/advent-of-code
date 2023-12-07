@@ -1,9 +1,9 @@
 #![feature(iter_advance_by)]
 
-use std::{fs, str::Lines, vec};
+use std::{fs, str::Lines};
 
+use common::parse_line_numbers;
 use itertools::Itertools;
-use regex::Regex;
 
 #[derive(Debug)]
 struct MapEntry {
@@ -70,15 +70,6 @@ impl Almanac {
             .min()
             .unwrap()
     }
-}
-
-fn parse_line_numbers(line: &str) -> Vec<u64> {
-    let numbers_re = Regex::new(r"(\d+)").unwrap();
-
-    numbers_re
-        .find_iter(line)
-        .filter_map(|digits| digits.as_str().parse().ok())
-        .collect()
 }
 
 /// Parse the next section
