@@ -10,3 +10,4 @@ license.workspace = true
 
 [dependencies]
 regex.workspace = true
+anyhow = "1.0.75"

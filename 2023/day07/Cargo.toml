@@ -1,0 +1,12 @@
+[package]
+name = "aoc2023day07"
+edition.workspace = true
+version.workspace = true
+authors.workspace = true
+repository.workspace = true
+license.workspace = true
+
+[dependencies]
+common = { path = "../../common" }
+itertools.workspace = true
+regex.workspace = true
