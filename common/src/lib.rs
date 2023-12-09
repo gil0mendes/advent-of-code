@@ -18,6 +18,15 @@ pub fn parse_line_numbers(line: &str) -> Vec<u64> {
         .collect()
 }
 
+pub fn parse_line_neg_numbers(line: &str) -> Vec<i64> {
+    let numbers_re = Regex::new(r"(-?\d+)").unwrap();
+
+    numbers_re
+        .find_iter(line)
+        .filter_map(|digits| digits.as_str().parse().ok())
+        .collect()
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
